@@ -5,7 +5,7 @@
 <!-- requires URL update [![Windows Build Status][ci-win-img]][ci-win-url] -->
 <!-- doesn't work in haraka plugins... yet. [![Code Coverage][cov-img]][cov-url]-->
 
-# haraka-plugin-template
+# haraka-plugin-fcrdns
 
 Clone me, to create a new plugin!
 
@@ -30,11 +30,11 @@ export MY_PLUGIN_NAME=haraka-plugin-SOMETHING
 export MY_PLUGIN_REPO=git@github.com:SOME_ORG/haraka-plugin-SOMETHING.git
 ```
 
-Clone and rename the template repo:
+Clone and rename the fcrdns repo:
 
 ```sh
-git clone git@github.com:haraka/haraka-plugin-template.git
-mv haraka-plugin-template $MY_PLUGIN_REPO
+git clone git@github.com:haraka/haraka-plugin-fcrdns.git
+mv haraka-plugin-fcrdns $MY_PLUGIN_REPO
 cd $MY_PLUGIN_REPO
 git remote rm origin
 git remote add origin $MY_PLUGIN_REPO
@@ -44,7 +44,7 @@ Now you'll have a local git repo to begin authoring your plugin
 
 ## rename boilerplate
 
-Replaces all uses of the word `template` with your plugin's name.
+Replaces all uses of the word `fcrdns` with your plugin's name.
 
 git push
 
@@ -61,15 +61,15 @@ git push
 
 
 <!-- leave these buried at the bottom of the document -->
-[ci-img]: https://travis-ci.org/haraka/haraka-plugin-template.svg
-[ci-url]: https://travis-ci.org/haraka/haraka-plugin-template
+[ci-img]: https://travis-ci.org/haraka/haraka-plugin-fcrdns.svg
+[ci-url]: https://travis-ci.org/haraka/haraka-plugin-fcrdns
 [ci-win-img]: https://ci.appveyor.com/api/projects/status/CHANGETHIS?svg=true
 [ci-win-url]: https://ci.appveyor.com/project/haraka/haraka-CHANGETHIS
-[cov-img]: https://codecov.io/github/haraka/haraka-plugin-template/coverage.svg
-[cov-url]: https://codecov.io/github/haraka/haraka-plugin-template
-[clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-template/badges/gpa.svg
-[clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-template
-[gk-img]: https://badges.greenkeeper.io/haraka/haraka-plugin-template.svg
+[cov-img]: https://codecov.io/github/haraka/haraka-plugin-fcrdns/coverage.svg
+[cov-url]: https://codecov.io/github/haraka/haraka-plugin-fcrdns
+[clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns/badges/gpa.svg
+[clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns
+[gk-img]: https://badges.greenkeeper.io/haraka/haraka-plugin-fcrdns.svg
 [gk-url]: https://greenkeeper.io/
-[npm-img]: https://nodei.co/npm/haraka-plugin-template.png
-[npm-url]: https://www.npmjs.com/package/haraka-plugin-template
+[npm-img]: https://nodei.co/npm/haraka-plugin-fcrdns.png
+[npm-url]: https://www.npmjs.com/package/haraka-plugin-fcrdns
