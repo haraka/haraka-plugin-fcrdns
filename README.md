@@ -1,20 +1,38 @@
 [![Build Status][ci-img]][ci-url]
 [![Code Climate][clim-img]][clim-url]
 [![Greenkeeper badge][gk-img]][gk-url]
+[![Windows Build Status][ci-win-img]][ci-win-url]
 [![NPM][npm-img]][npm-url]
-<!-- requires URL update [![Windows Build Status][ci-win-img]][ci-win-url] -->
 <!-- doesn't work in haraka plugins... yet. [![Code Coverage][cov-img]][cov-url]-->
+
 
 # haraka-plugin-fcrdns
 
-Forward Confirmed Reverse DNS
+[Forward Confirmed Reverse DNS](http://en.wikipedia.org/wiki/FCrDNS)
 
 ## DESCRIPTION
 
 Determine if the SMTP sender has matching forward and reverse DNS.
 
-See [FCrDNS at wikipedia](http://en.wikipedia.org/wiki/FCrDNS)
+## INSTALL
 
+This plugin is automatically installed with Haraka >= 2.8.14 and needs only to be
+activated by removing the leading comment (#) symbol:
+
+```sh
+cd /path/to/haraka
+sed -i '' -e '/fcrdns/ s/^# //' config/plugins
+```
+
+## UPGRADE
+
+To upgrade from versions of Haraka <= 2.8.13
+
+```sh
+cd /path/to/haraka
+npm install haraka-plugin-fcrdns
+sed -i '' -e 's/connect.fcrdns/fcrdns/' config/plugins
+```
 
 ## USAGE
 
@@ -122,8 +140,8 @@ The iprev results are added to the Authentication-Results header.
 <!-- leave these buried at the bottom of the document -->
 [ci-img]: https://travis-ci.org/haraka/haraka-plugin-fcrdns.svg
 [ci-url]: https://travis-ci.org/haraka/haraka-plugin-fcrdns
-[ci-win-img]: https://ci.appveyor.com/api/projects/status/CHANGETHIS?svg=true
-[ci-win-url]: https://ci.appveyor.com/project/haraka/haraka-CHANGETHIS
+[ci-win-img]: https://ci.appveyor.com/api/projects/status/h8jdar9lkw4jerpa?svg=true
+[ci-win-url]: https://ci.appveyor.com/project/msimerson/haraka-plugin-fcrdns
 [cov-img]: https://codecov.io/github/haraka/haraka-plugin-fcrdns/coverage.svg
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-fcrdns
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns/badges/gpa.svg
