@@ -28,5 +28,10 @@
     "eslint-plugin-haraka": "*",
     "haraka-test-fixtures": "*",
     "mocha": "*"
+  },
+  "dependencies": {
+    "haraka-constants": "^1.0.2",
+    "haraka-net-utils": "^1.0.5",
+    "haraka-tld": "^1.0.13"
   }
 }
