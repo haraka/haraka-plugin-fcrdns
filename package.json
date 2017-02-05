@@ -4,8 +4,8 @@
   "description": "Haraka plugin that frobnicates email connections",
   "main": "index.js",
   "scripts": {
-    "lint": "./node_modules/.bin/eslint *.js test/**/*.js",
-    "lintfix": "./node_modules/.bin/eslint --fix *.js test/**/*.js",
+    "lint": "./node_modules/.bin/eslint *.js test/*.js",
+    "lintfix": "./node_modules/.bin/eslint --fix *.js test/*.js",
     "test": "./node_modules/.bin/mocha"
   },
   "repository": {
