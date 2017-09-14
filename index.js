@@ -145,7 +145,7 @@ exports.do_dns_lookups = function (next, connection) {
 
 exports.add_message_headers = function (next, connection) {
     const plugin = this
-    const txn = connection.transaction
+    const txn = connection.transaction;
 
     ['rDNS', 'FCrDNS', 'rDNS-OtherIPs', 'HostID' ].forEach(function (h) {
         txn.remove_header('X-Haraka-' + h)
