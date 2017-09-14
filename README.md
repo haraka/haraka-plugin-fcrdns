@@ -32,6 +32,7 @@ To upgrade from versions of Haraka <= 2.8.13
 cd /path/to/haraka
 npm install haraka-plugin-fcrdns
 sed -i '' -e 's/connect.fcrdns/fcrdns/' config/plugins
+mv config/connect.fcrdns.ini config/fcrdns.ini
 ```
 
 ## USAGE
