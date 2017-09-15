@@ -1,6 +1,6 @@
 {
   "name": "haraka-plugin-fcrdns",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Haraka plugin that frobnicates email connections",
   "main": "index.js",
   "scripts": {
@@ -30,8 +30,8 @@
     "mocha": "*"
   },
   "dependencies": {
-    "haraka-constants": "^1.0.2",
-    "haraka-net-utils": "^1.0.5",
-    "haraka-tld": "^1.0.13"
+    "haraka-constants": "*",
+    "haraka-net-utils": "*",
+    "haraka-tld": "*"
   }
 }
