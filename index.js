@@ -61,7 +61,7 @@ exports.do_dns_lookups = function (next, connection) {
     const rip = connection.remote.ip
 
     // Set-up timer
-    let timer = setTimeout(function () {
+    const timer = setTimeout(function () {
         connection.results.add(plugin, {err: 'timeout', emit: true})
         if (!plugin.cfg.reject.no_rdns) return do_next()
         if (plugin.is_whitelisted(connection)) return do_next()
