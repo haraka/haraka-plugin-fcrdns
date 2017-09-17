@@ -206,7 +206,12 @@ exports.check_fcrdns = function (connection, results, next) {
         }
 
         // FCrDNS? PTR -> (A | AAAA) 3. PTR comparison
-        plugin.ptr_compare(results[fdom], connection, fdom)
+        if (Array.isArray(results[fdom])) {
+            plugin.ptr_compare(results[fdom], connection, fdom)
+        }
+        else {
+            plugin.ptr_compare([results[fdom]], connection, fdom)
+        }
 
         connection.results.add(plugin, {ptr_name_has_ips: true})
 
@@ -223,7 +228,7 @@ exports.check_fcrdns = function (connection, results, next) {
 
     const r = connection.results.get('fcrdns')
     if (!r) return next()
-    if (r.length) return next()
+    if (r.fcrdns && r.fcrdns.length) return next()
 
     if (plugin.cfg.reject.no_fcrdns) {
         return next(DENY, 'Sorry, no FCrDNS match found')
