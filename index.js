@@ -223,7 +223,7 @@ exports.check_fcrdns = function (connection, results, next) {
 
     const r = connection.results.get('fcrdns')
     if (!r) return next()
-    if (r.length) return next()
+    if (r.fcrdns && r.fcrdns.length) return next()
 
     if (plugin.cfg.reject.no_fcrdns) {
         return next(DENY, 'Sorry, no FCrDNS match found')
