@@ -189,7 +189,8 @@ describe('check_fcrdns', function () {
 
     it('fail, tolerate', function (done) {
         this.connection.remote.ip = '10.1.1.1'
-        this.plugin.check_fcrdns(this.connection, ['foo.example.com'], function (rc, msg) {
+        const results = { 'foo.example.com': [ ] };
+        this.plugin.check_fcrdns(this.connection, results, function (rc, msg) {
             assert.equal(rc, undefined)
             done()
         })
@@ -198,7 +199,8 @@ describe('check_fcrdns', function () {
     it('null host', function (done) {
         // this result was experienced "in the wild"
         this.connection.remote.ip = '10.1.1.1'
-        this.plugin.check_fcrdns(this.connection, ['foo.example.com','', null], function (rc, msg) {
+        const results = { 'foo.example.com': [ '', null ] }
+        this.plugin.check_fcrdns(this.connection, results, function (rc, msg) {
             assert.equal(rc, undefined)
             done()
         })
@@ -207,17 +209,30 @@ describe('check_fcrdns', function () {
 
 describe('do_dns_lookups', function () {
 
-    it('performs a rdns lookup', function (done) {
+    const testIps = {
+        '8.8.4.4': 'google.com',
+        '2001:4860:4860::8844': 'google.com',
+        '4.2.2.2': 'level3.net',
+        '208.67.222.222': 'opendns.com',
+        // '2001:428::1': 'qwest.net',
+    }
 
-        const conn = this.connection
-        conn.remote.ip = '8.8.4.4'
+    Object.keys(testIps).forEach((ip) => {
 
-        this.plugin.do_dns_lookups((rc, msg) => {
-            assert.ok( /google.com/.test(conn.results.get('fcrdns').fcrdns[0]))
-            assert.equal(rc, undefined)
-            assert.equal(msg, undefined)
-            done()
-        },
-        conn)
+        it(`looks up ${ip}`, function (done) {
+
+            const conn = this.connection
+            conn.remote.ip = ip
+
+            this.plugin.do_dns_lookups((rc, msg) => {
+                const res = conn.results.get('fcrdns')
+                assert.ok(new RegExp( testIps[ip] ).test(res.fcrdns[0]))
+                // console.log(res);
+                assert.equal(rc, undefined)
+                assert.equal(msg, undefined)
+                done()
+            },
+            conn)
+        })
     })
 })
