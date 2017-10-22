@@ -99,7 +99,7 @@ exports.do_dns_lookups = function (next, connection) {
                 if (plugin.is_whitelisted(connection)) continue
                 if (net_utils.is_private_ip(rip)) continue
                 return do_next(constants.DENY, `client [${rip}] rejected;` +
-                	` invalid TLD in rDNS (${ptr_domain})`)
+                    ` invalid TLD in rDNS (${ptr_domain})`)
             }
 
             queries_run = true
@@ -214,7 +214,7 @@ exports.check_fcrdns = function (connection, results, next) {
             plugin.cfg.reject.generic_rdns &&
             !plugin.is_whitelisted(connection)) {
             return next(DENY, `client ${fdom} [${connection.remote.ip}] rejected;` +
-            	` generic rDNS, please use your ISPs SMTP relay`)
+                ` generic rDNS, please use your ISPs SMTP relay`)
         }
     }
 
