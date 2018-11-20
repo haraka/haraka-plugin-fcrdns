@@ -15,7 +15,7 @@ exports.register = function () {
 
     plugin.register_hook('connect_init', 'initialize_fcrdns')
     plugin.register_hook('lookup_rdns',  'do_dns_lookups')
-    plugin.register_hook('hook_data',    'add_message_headers')
+    plugin.register_hook('data',         'add_message_headers')
 }
 
 exports.load_fcrdns_ini = function () {
