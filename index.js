@@ -65,7 +65,7 @@ exports.do_dns_lookups = function (next, connection) {
         connection.results.add(plugin, {err: 'timeout', emit: true})
         if (!plugin.cfg.reject.no_rdns) return do_next()
         if (plugin.is_whitelisted(connection)) return do_next()
-        return do_next(DENYSOFT, 'client [' + rip + '] rDNS lookup timeout')
+        return do_next(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
     }, (plugin.cfg.main.timeout || 30) * 1000)
 
     let called_next = 0
@@ -78,7 +78,7 @@ exports.do_dns_lookups = function (next, connection) {
     }
 
     dns.reverse(rip, (err, ptr_names) => {
-        connection.logdebug(plugin, 'rdns lookup: ' + rip)
+        connection.logdebug(plugin, `rdns lookup: ${rip}`)
         if (err) return plugin.handle_ptr_error(connection, err, do_next)
 
         connection.results.add(plugin, {ptr_names: ptr_names})
@@ -94,16 +94,16 @@ exports.do_dns_lookups = function (next, connection) {
 
             // Make sure TLD is valid
             if (!tlds.get_organizational_domain(ptr_domain)) {
-                connection.results.add(plugin, {fail: 'valid_tld(' + ptr_domain +')'})
+                connection.results.add(plugin, {fail: `valid_tld(${ptr_domain})`})
                 if (!plugin.cfg.reject.invalid_tld) continue
                 if (plugin.is_whitelisted(connection)) continue
                 if (net_utils.is_private_ip(rip)) continue
-                return do_next(constants.DENY, 'client [' + rip +
-                        '] rejected; invalid TLD in rDNS (' + ptr_domain + ')')
+                return do_next(constants.DENY, `client [${rip}] rejected;` +
+                    ` invalid TLD in rDNS (${ptr_domain})`)
             }
 
             queries_run = true
-            connection.logdebug(plugin, 'domain: ' + ptr_domain)
+            connection.logdebug(plugin, `domain: ${ptr_domain}`)
             pending_queries++
             net_utils.get_ips_by_host(ptr_domain, function (err2, ips) {
                 pending_queries--
@@ -120,14 +120,14 @@ exports.do_dns_lookups = function (next, connection) {
                     }
                 }
 
-                connection.logdebug(plugin, ptr_domain + ' => ' + ips)
+                connection.logdebug(plugin, `${ptr_domain} => ${ips}`)
                 results[ptr_domain] = ips
 
                 if (pending_queries > 0) return
 
                 if (ips.length === 0) {
                     connection.results.add(plugin,
-                        { fail: 'ptr_valid('+ptr_domain+')' })
+                        { fail: `ptr_valid(${ptr_domain})` })
                 }
 
                 // Got all DNS results
@@ -179,14 +179,14 @@ exports.handle_ptr_error = function (connection, err, next) {
             connection.results.add(plugin, {fail: 'has_rdns', emit: true})
             if (!plugin.cfg.reject.no_rdns) return next()
             if (plugin.is_whitelisted((connection))) return next()
-            return next(DENY, 'client [' + rip + '] rejected; no rDNS')
+            return next(DENY, `client [${rip}] rejected; no rDNS`)
     }
 
     connection.results.add(plugin, {err: err.code})
 
     if (!plugin.cfg.reject.no_rdns) return next()
     if (plugin.is_whitelisted(connection)) return next()
-    return next(DENYSOFT, 'client [' + rip + '] rDNS lookup error (' + err + ')')
+    return next(DENYSOFT, `client [${rip}] rDNS lookup error (${err})`)
 }
 
 exports.check_fcrdns = function (connection, results, next) {
@@ -213,8 +213,8 @@ exports.check_fcrdns = function (connection, results, next) {
         if (plugin.is_generic_rdns(connection, fdom) &&
             plugin.cfg.reject.generic_rdns &&
             !plugin.is_whitelisted(connection)) {
-            return next(DENY, 'client ' + fdom + ' [' + connection.remote.ip +
-                '] rejected; generic rDNS, please use your ISPs SMTP relay')
+            return next(DENY, `client ${fdom} [${connection.remote.ip}] rejected;` +
+                ` generic rDNS, please use your ISPs SMTP relay`)
         }
     }
 
@@ -285,7 +285,7 @@ exports.is_generic_rdns = function (connection, domain) {
 
     const orgDom = tlds.get_organizational_domain(domain)
     if (!orgDom) {
-        connection.loginfo(this, 'no org domain for: ' + domain)
+        connection.loginfo(this, `no org domain for: ${domain}`)
         return false
     }
 
