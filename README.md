@@ -39,18 +39,18 @@ mv config/connect.fcrdns.ini config/fcrdns.ini
 
 Other plugins can use FCrDNS results like this:
 
-    var fcrdns = connection.results.get('fcrdns');
-    if (fcrdns) {
-        if (fcrdns.fcrdns) {
-            // they passed, reward them
-        }
-
-        var fails = fcrdns.fail;
-        if (connection.results.has('fcrdns', 'fail', /^is_generic/) {
-            // their IP is in their hostname, unlikely to be MX, penalize
-        }
+```js
+const fcrdns = connection.results.get('fcrdns');
+if (fcrdns) {
+    if (fcrdns.fcrdns) {
+        // they passed, reward them
     }
 
+    if (connection.results.has('fcrdns', 'fail', /^is_generic/)) {
+        // their IP is in their hostname, unlikely to be MX, penalize
+    }
+}
+```
 
 ## CONFIGURATION
 
@@ -67,6 +67,7 @@ When performing DNS lookups, time out after this many seconds.
 The following settings permit control of which test will block connections. To
 mimic the lookup\_rdns.strict plugin, set no\_rdns=true.
 
+```ini
     [reject]
     ; reject if the IP address has no PTR record
     no_rdns=false
@@ -81,6 +82,7 @@ mimic the lookup\_rdns.strict plugin, set no\_rdns=true.
     ; 1.2.3.4.in.addr.arpa
     ; c-67-171-0-90.hsd1.wa.comcast.net
     generic_rdns=false
+```
 
 
 ## ANTI-SPAM EFFECTS

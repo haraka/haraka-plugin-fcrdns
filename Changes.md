@@ -1,4 +1,9 @@
 
+## 1.0.3 - 2018-11-20
+
+- Fix data hook #12
+- Replace string concatenations with template literals #8
+
 ## 1.0.2 - 2017-09-19
 
 - domains with fcrdns were being rejected #7

@@ -30,6 +30,10 @@ exports.load_fcrdns_ini = function () {
     }, function () {
         plugin.load_fcrdns_ini()
     })
+
+    if (isNaN(plugin.cfg.main.timeout)) {
+        plugin.cfg.main.timeout = (plugin.timeout || 30) - 1;
+    }
 }
 
 exports.initialize_fcrdns = function (next, connection) {
@@ -66,7 +70,7 @@ exports.do_dns_lookups = function (next, connection) {
         if (!plugin.cfg.reject.no_rdns) return do_next()
         if (plugin.is_whitelisted(connection)) return do_next()
         return do_next(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
-    }, (plugin.cfg.main.timeout || 30) * 1000)
+    }, plugin.cfg.main.timeout * 1000)
 
     let called_next = 0
 
@@ -98,8 +102,7 @@ exports.do_dns_lookups = function (next, connection) {
                 if (!plugin.cfg.reject.invalid_tld) continue
                 if (plugin.is_whitelisted(connection)) continue
                 if (net_utils.is_private_ip(rip)) continue
-                return do_next(constants.DENY, `client [${rip}] rejected;` +
-                    ` invalid TLD in rDNS (${ptr_domain})`)
+                return do_next(constants.DENY, `client [${rip}] rejected; invalid TLD in rDNS (${ptr_domain})`)
             }
 
             queries_run = true
@@ -147,7 +150,7 @@ exports.add_message_headers = function (next, connection) {
     const plugin = this
     const txn = connection.transaction;
 
-    ['rDNS', 'FCrDNS', 'rDNS-OtherIPs', 'HostID' ].forEach(function (h) {
+    ['rDNS', 'FCrDNS', 'rDNS-OtherIPs', 'HostID' ].forEach((h) => {
         txn.remove_header('X-Haraka-' + h)
     })
 
@@ -166,7 +169,7 @@ exports.add_message_headers = function (next, connection) {
     if (fcrdns.other_ips && fcrdns.other_ips.length) {
         txn.add_header('X-Haraka-rDNS-OtherIPs', fcrdns.other_ips.join(' '))
     }
-    return next()
+    next()
 }
 
 exports.handle_ptr_error = function (connection, err, next) {
@@ -186,7 +189,7 @@ exports.handle_ptr_error = function (connection, err, next) {
 
     if (!plugin.cfg.reject.no_rdns) return next()
     if (plugin.is_whitelisted(connection)) return next()
-    return next(DENYSOFT, `client [${rip}] rDNS lookup error (${err})`)
+    next(DENYSOFT, `client [${rip}] rDNS lookup error (${err})`)
 }
 
 exports.check_fcrdns = function (connection, results, next) {
@@ -228,7 +231,7 @@ exports.check_fcrdns = function (connection, results, next) {
     if (plugin.cfg.reject.no_fcrdns) {
         return next(DENY, 'Sorry, no FCrDNS match found')
     }
-    return next()
+    next()
 }
 
 exports.ptr_compare = function (ip_list, connection, domain) {
