@@ -220,6 +220,7 @@ describe('do_dns_lookups', function () {
     Object.keys(testIps).forEach((ip) => {
 
         it(`looks up ${ip}`, function (done) {
+            this.timeout(4000);
 
             const conn = this.connection
             conn.remote.ip = ip
@@ -238,6 +239,8 @@ describe('do_dns_lookups', function () {
 })
 
 describe('resolve_ptr_names', function () {
+    this.timeout(5000);
+
     it('gets IPs from valid host names', function (done) {
         const ptr_names = [ 'mail.theartfarm.com' ]
         this.plugin.resolve_ptr_names(ptr_names, this.connection, () => {
