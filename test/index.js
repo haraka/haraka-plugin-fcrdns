@@ -208,6 +208,7 @@ describe('check_fcrdns', function () {
 })
 
 describe('do_dns_lookups', function () {
+    this.timeout(4000);
 
     const testIps = {
         '8.8.4.4': 'google.com',
@@ -238,6 +239,8 @@ describe('do_dns_lookups', function () {
 })
 
 describe('resolve_ptr_names', function () {
+    this.timeout(4000);
+
     it('gets IPs from valid host names', function (done) {
         const ptr_names = [ 'mail.theartfarm.com' ]
         this.plugin.resolve_ptr_names(ptr_names, this.connection, () => {
