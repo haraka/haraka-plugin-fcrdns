@@ -54,6 +54,64 @@ exports.initialize_fcrdns = function (next, connection) {
     next()
 }
 
+exports.resolve_ptr_names = function (ptr_names, connection, next) {
+    const plugin = this;
+
+    // Fetch A & AAAA records for each PTR host name
+    let pending_queries = 0
+    let queries_run = false
+
+    const results = {}
+    for (let i=0; i<ptr_names.length; i++) {
+        const ptr_domain = ptr_names[i].toLowerCase()
+        results[ptr_domain] = []
+
+        // Make sure TLD is valid
+        if (!tlds.get_organizational_domain(ptr_domain)) {
+            connection.results.add(plugin, {fail: `valid_tld(${ptr_domain})`})
+            if (!plugin.cfg.reject.invalid_tld) continue
+            if (plugin.is_whitelisted(connection)) continue
+            if (net_utils.is_private_ip(connection.remote.ip)) continue
+            return next(constants.DENY, `client [${connection.remote.ip}] rejected; invalid TLD in rDNS (${ptr_domain})`)
+        }
+
+        queries_run = true
+        connection.logdebug(plugin, `domain: ${ptr_domain}`)
+        pending_queries++
+        net_utils.get_ips_by_host(ptr_domain, function (err2, ips) {
+            pending_queries--
+
+            if (err2) {
+                for (let e=0; e < err2.length; e++) {
+                    switch (err2[e].code) {
+                        case dns.NODATA:
+                        case dns.NOTFOUND:
+                            break
+                        default:
+                            connection.results.add(plugin, {err: err2[e].message})
+                    }
+                }
+            }
+
+            connection.logdebug(plugin, `${ptr_domain} => ${ips}`)
+            results[ptr_domain] = ips
+
+            if (pending_queries > 0) return
+
+            if (ips.length === 0) {
+                connection.results.add(plugin, { fail: `ptr_valid(${ptr_domain})` })
+            }
+
+            // Got all DNS results
+            connection.results.add(plugin, {ptr_name_to_ip: results})
+            plugin.check_fcrdns(connection, results, next)
+        })
+    }
+
+    // No valid PTR
+    if (!queries_run || (queries_run && pending_queries === 0)) next()
+}
+
 exports.do_dns_lookups = function (next, connection) {
     const plugin = this
 
@@ -67,82 +125,28 @@ exports.do_dns_lookups = function (next, connection) {
     // Set-up timer
     const timer = setTimeout(function () {
         connection.results.add(plugin, {err: 'timeout', emit: true})
-        if (!plugin.cfg.reject.no_rdns) return do_next()
-        if (plugin.is_whitelisted(connection)) return do_next()
-        return do_next(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
+        if (!plugin.cfg.reject.no_rdns) return nextOnce()
+        if (plugin.is_whitelisted(connection)) return nextOnce()
+        return nextOnce(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
     }, plugin.cfg.main.timeout * 1000)
 
     let called_next = 0
 
-    function do_next (code, msg) {
+    function nextOnce (code, msg) {
         if (called_next) return
         called_next++
         clearTimeout(timer)
-        return next(code, msg)
+        next(code, msg)
     }
 
     dns.reverse(rip, (err, ptr_names) => {
-        connection.logdebug(plugin, `rdns lookup: ${rip}`)
-        if (err) return plugin.handle_ptr_error(connection, err, do_next)
+        connection.logdebug(plugin, `rdns.reverse(${rip})`)
+        if (err) return plugin.handle_ptr_error(connection, err, nextOnce)
 
         connection.results.add(plugin, {ptr_names: ptr_names})
         connection.results.add(plugin, {has_rdns: true})
 
-        // Fetch A & AAAA records for each PTR host name
-        let pending_queries = 0
-        let queries_run = false
-        const results = {}
-        for (let i=0; i<ptr_names.length; i++) {
-            const ptr_domain = ptr_names[i].toLowerCase()
-            results[ptr_domain] = []
-
-            // Make sure TLD is valid
-            if (!tlds.get_organizational_domain(ptr_domain)) {
-                connection.results.add(plugin, {fail: `valid_tld(${ptr_domain})`})
-                if (!plugin.cfg.reject.invalid_tld) continue
-                if (plugin.is_whitelisted(connection)) continue
-                if (net_utils.is_private_ip(rip)) continue
-                return do_next(constants.DENY, `client [${rip}] rejected; invalid TLD in rDNS (${ptr_domain})`)
-            }
-
-            queries_run = true
-            connection.logdebug(plugin, `domain: ${ptr_domain}`)
-            pending_queries++
-            net_utils.get_ips_by_host(ptr_domain, function (err2, ips) {
-                pending_queries--
-
-                if (err2) {
-                    for (let e=0; e < err2.length; e++) {
-                        switch (err2[e].code) {
-                            case dns.NODATA:
-                            case dns.NOTFOUND:
-                                break
-                            default:
-                                connection.results.add(plugin, {err: err2[e].message})
-                        }
-                    }
-                }
-
-                connection.logdebug(plugin, `${ptr_domain} => ${ips}`)
-                results[ptr_domain] = ips
-
-                if (pending_queries > 0) return
-
-                if (ips.length === 0) {
-                    connection.results.add(plugin,
-                        { fail: `ptr_valid(${ptr_domain})` })
-                }
-
-                // Got all DNS results
-                connection.results.add(plugin, {ptr_name_to_ip: results})
-                return plugin.check_fcrdns(connection, results, do_next)
-            })
-        }
-
-        // No valid PTR
-        if (!queries_run || (queries_run && pending_queries === 0)) {
-            return do_next()
-        }
+        plugin.resolve_ptr_names(ptr_names, connection, nextOnce);
     })
 }
 

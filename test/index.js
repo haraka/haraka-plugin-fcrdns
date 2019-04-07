@@ -236,3 +236,24 @@ describe('do_dns_lookups', function () {
         })
     })
 })
+
+describe('resolve_ptr_names', function () {
+    it('gets IPs from valid host names', function (done) {
+        const ptr_names = [ 'mail.theartfarm.com' ]
+        this.plugin.resolve_ptr_names(ptr_names, this.connection, () => {
+            // console.log(this.connection.results.store.fcrdns)
+            assert.ok(this.connection.results.store.fcrdns.other_ips.length)
+            done()
+        })
+    })
+
+    it('ignores invalid host names', function (done) {
+        const ptr_names = [ 'mail.invalid' ]
+        this.plugin.resolve_ptr_names(ptr_names, this.connection, () => {
+            // console.log(this.connection.results.store.fcrdns)
+            assert.ok(this.connection.results.store.fcrdns.other_ips.length === 0)
+            done()
+        })
+    })
+
+})
