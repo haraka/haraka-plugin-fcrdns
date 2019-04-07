@@ -208,7 +208,6 @@ describe('check_fcrdns', function () {
 })
 
 describe('do_dns_lookups', function () {
-    this.timeout(4000);
 
     const testIps = {
         '8.8.4.4': 'google.com',
@@ -221,6 +220,7 @@ describe('do_dns_lookups', function () {
     Object.keys(testIps).forEach((ip) => {
 
         it(`looks up ${ip}`, function (done) {
+            this.timeout(4000);
 
             const conn = this.connection
             conn.remote.ip = ip
@@ -239,7 +239,7 @@ describe('do_dns_lookups', function () {
 })
 
 describe('resolve_ptr_names', function () {
-    this.timeout(4000);
+    this.timeout(5000);
 
     it('gets IPs from valid host names', function (done) {
         const ptr_names = [ 'mail.theartfarm.com' ]
