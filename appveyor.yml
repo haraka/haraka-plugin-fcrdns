@@ -14,7 +14,7 @@ before_test:
   - npm --version
 
 test_script:
-  - npm test
+  - C:\projects\haraka-plugin-fcrdns\node_modules\.bin\mocha
 
 after_test:
 
