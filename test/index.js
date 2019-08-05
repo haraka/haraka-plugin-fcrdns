@@ -210,8 +210,8 @@ describe('check_fcrdns', function () {
 describe('do_dns_lookups', function () {
 
     const testIps = {
-        '8.8.4.4': 'google.com',
-        '2001:4860:4860::8844': 'google.com',
+        '8.8.4.4': 'dns.google',
+        '2001:4860:4860::8844': 'dns.google',
         '4.2.2.2': 'level3.net',
         '208.67.222.222': 'opendns.com',
         // '2001:428::1': 'qwest.net',
