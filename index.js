@@ -143,7 +143,7 @@ exports.do_dns_lookups = function (next, connection) {
         connection.logdebug(plugin, `rdns.reverse(${rip})`)
         if (err) return plugin.handle_ptr_error(connection, err, nextOnce)
 
-        connection.results.add(plugin, {ptr_names: ptr_names})
+        connection.results.add(plugin, {ptr_names})
         connection.results.add(plugin, {has_rdns: true})
 
         plugin.resolve_ptr_names(ptr_names, connection, nextOnce);
