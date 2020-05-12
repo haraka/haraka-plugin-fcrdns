@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/haraka/haraka-plugin-fcrdns#readme",
   "devDependencies": {
-    "eslint": ">=4",
+    "eslint": ">=6",
     "eslint-plugin-haraka": "*",
     "haraka-test-fixtures": "*",
     "mocha": "*"
