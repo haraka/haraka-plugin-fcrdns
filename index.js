@@ -183,6 +183,7 @@ exports.handle_ptr_error = function (connection, err, next) {
     switch (err.code) {
         case dns.NOTFOUND:
         case dns.NXDOMAIN:
+        case dns.NODATA:
             connection.results.add(plugin, {fail: 'has_rdns', emit: true})
             if (!plugin.cfg.reject.no_rdns) return next()
             if (plugin.is_whitelisted((connection))) return next()
