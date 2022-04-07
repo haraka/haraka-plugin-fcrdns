@@ -6,37 +6,29 @@ const dns      = require('dns')
 // npm modules
 const fixtures = require('haraka-test-fixtures')
 
-// start of tests
-//    assert: https://nodejs.org/api/assert.html
-//    mocha: http://mochajs.org
 
 beforeEach(function (done) {
     this.plugin = new fixtures.plugin('fcrdns')
     this.plugin.register()
     this.connection = new fixtures.connection.createConnection()
-    this.plugin.initialize_fcrdns(() => {
-        done()
-    }, this.connection)
+    this.plugin.initialize_fcrdns(done, this.connection)
 })
 
 describe('fcrdns', function () {
-    it('loads', function (done) {
+    it('loads', function () {
         assert.ok(this.plugin)
-        done()
     })
 })
 
 describe('load_fcrdns_ini', function () {
-    it('loads fcrdns.ini from config/fcrdns.ini', function (done) {
+    it('loads fcrdns.ini from config/fcrdns.ini', function () {
         this.plugin.load_fcrdns_ini()
         assert.ok(this.plugin.cfg)
-        done()
     })
 
-    it('initializes enabled boolean', function (done) {
+    it('initializes enabled boolean', function () {
         this.plugin.load_fcrdns_ini()
         assert.equal(this.plugin.cfg.reject.no_rdns, false, this.plugin.cfg)
-        done()
     })
 })
 
@@ -46,8 +38,8 @@ describe('handle_ptr_error', function () {
         err.code = dns.NOTFOUND
         this.plugin.handle_ptr_error(this.connection, err, function () {
             assert.equal(undefined, arguments[0])
+            done()
         })
-        done()
     })
 
     it('ENOTFOUND reject.no_rdns=1', function (done) {
@@ -56,8 +48,8 @@ describe('handle_ptr_error', function () {
         this.plugin.cfg.reject.no_rdns=1
         this.plugin.handle_ptr_error(this.connection, err, function () {
             assert.equal(DENY, arguments[0])
+            done()
         })
-        done()
     })
 
     it('dns.NOTFOUND reject.no_rdns=0', function (done) {
@@ -76,8 +68,8 @@ describe('handle_ptr_error', function () {
         this.plugin.cfg.reject.no_rdns=1
         this.plugin.handle_ptr_error(this.connection, err, function () {
             assert.equal(DENY, arguments[0])
+            done()
         })
-        done()
     })
 
     it('dns.FAKE reject.no_rdns=0', function (done) {
@@ -96,15 +88,15 @@ describe('handle_ptr_error', function () {
         this.plugin.cfg.reject.no_rdns=1
         this.plugin.handle_ptr_error(this.connection, err, function () {
             assert.equal(DENYSOFT, arguments[0])
+            done()
         })
-        done()
     })
 })
 
 describe('is_generic_rdns', function () {
 
     it('mail.theartfarm.com', function (done) {
-        this.connection.remote.ip='208.75.177.101'
+        this.connection.remote.ip='66.128.51.165'
         assert.equal(
             false,
             this.plugin.is_generic_rdns(this.connection, 'mail.theartfarm.com')
@@ -148,40 +140,35 @@ describe('is_generic_rdns', function () {
 
 describe('save_auth_results', function () {
 
-    it('fcrdns fail', function (done) {
+    it('fcrdns fail', function () {
         this.connection.results.add(this.plugin, { pass: 'fcrdns' })
         assert.equal(false, this.plugin.save_auth_results(this.connection))
-        done()
     })
 
-    it('fcrdns pass', function (done) {
+    it('fcrdns pass', function () {
         this.connection.results.push(this.plugin, {fcrdns: 'example.com'})
         assert.equal(true, this.plugin.save_auth_results(this.connection))
-        done()
     })
 })
 
 describe('ptr_compare', function () {
 
-    it('fail', function (done) {
+    it('fail', function () {
         this.connection.remote.ip = '10.1.1.1'
         const iplist = ['10.0.1.1']
         assert.equal(false, this.plugin.ptr_compare(iplist, this.connection, 'foo.example.com'))
-        done()
     })
 
-    it('pass exact', function (done) {
+    it('pass exact', function () {
         this.connection.remote.ip = '10.1.1.1'
         const iplist = ['10.1.1.1']
         assert.equal(true, this.plugin.ptr_compare(iplist, this.connection, 'foo.example.com'))
-        done()
     })
 
-    it('pass net', function (done) {
+    it('pass net', function () {
         this.connection.remote.ip = '10.1.1.1'
         const iplist = ['10.1.1.2']
         assert.equal(true, this.plugin.ptr_compare(iplist, this.connection, 'foo.example.com'))
-        done()
     })
 })
 
@@ -213,29 +200,28 @@ describe('do_dns_lookups', function () {
         '8.8.4.4': 'dns.google',
         '2001:4860:4860::8844': 'dns.google',
         '4.2.2.2': 'level3.net',
-        '208.67.222.222': 'opendns.com',
-        // '2001:428::1': 'qwest.net',
+        // '208.67.222.222': 'opendns.com',
+        '1.1.1.1': 'one.one',
     }
 
-    Object.keys(testIps).forEach((ip) => {
+    for (const ip of Object.keys(testIps)) {
 
         it(`looks up ${ip}`, function (done) {
             this.timeout(5000);
 
-            const conn = this.connection
-            conn.remote.ip = ip
+            this.connection.remote.ip = ip
 
             this.plugin.do_dns_lookups((rc, msg) => {
-                const res = conn.results.get('fcrdns')
+                const res = this.connection.results.get('fcrdns')
                 assert.ok(new RegExp( testIps[ip] ).test(res.fcrdns[0]))
                 // console.log(res);
                 assert.equal(rc, undefined)
                 assert.equal(msg, undefined)
                 done()
             },
-            conn)
+            this.connection)
         })
-    })
+    }
 })
 
 describe('resolve_ptr_names', function () {
