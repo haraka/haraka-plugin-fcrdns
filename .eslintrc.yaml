@@ -3,6 +3,9 @@ env:
   es6: true
   mocha: true
 
+parserOptions:
+  ecmaVersion: 2020
+
 plugins: [ haraka ]
 
 extends: [ eslint:recommended, plugin:haraka/recommended ]

@@ -1,6 +1,5 @@
 [![Build Status][ci-img]][ci-url]
 [![Code Climate][clim-img]][clim-url]
-[![Windows Build Status][ci-win-img]][ci-win-url]
 [![NPM][npm-img]][npm-url]
 
 
@@ -139,10 +138,8 @@ The iprev results are added to the Authentication-Results header.
 
 
 <!-- leave these buried at the bottom of the document -->
-[ci-img]: https://travis-ci.org/haraka/haraka-plugin-fcrdns.svg
-[ci-url]: https://travis-ci.org/haraka/haraka-plugin-fcrdns
-[ci-win-img]: https://ci.appveyor.com/api/projects/status/xayl14cyhj8o834s?svg=true
-[ci-win-url]: https://ci.appveyor.com/project/msimerson/haraka-plugin-fcrdns
+[ci-img]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci-test.yml/badge.svg
+[ci-url]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci-test.yml
 [cov-img]: https://codecov.io/github/haraka/haraka-plugin-fcrdns/coverage.svg
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-fcrdns
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns/badges/gpa.svg
