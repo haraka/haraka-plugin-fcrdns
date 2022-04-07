@@ -2,6 +2,7 @@
 
 // build in node modules
 const dns       = require('dns')
+const net       = require('net')
 
 // NPM modules
 const constants = require('haraka-constants')
@@ -249,7 +250,8 @@ exports.ptr_compare = function (ip_list, connection, domain) {
         connection.results.push(plugin, {fcrdns: domain})
         return true
     }
-    if (net_utils.same_ipv4_network(connection.remote.ip, ip_list)) {
+    const ip_list_ipv4 = ip_list.filter(net.isIPv4)
+    if (ip_list_ipv4.length && net_utils.same_ipv4_network(connection.remote.ip, ip_list_ipv4)) {
         connection.results.add(plugin, {pass: 'fcrdns(net)' })
         connection.results.push(plugin, {fcrdns: domain})
         return true
