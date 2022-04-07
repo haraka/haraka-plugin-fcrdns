@@ -1,6 +1,6 @@
 {
   "name": "haraka-plugin-fcrdns",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Haraka plugin that checks a remote for Forward Confirmed reverse DNS",
   "main": "index.js",
   "scripts": {

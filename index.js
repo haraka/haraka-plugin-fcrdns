@@ -247,14 +247,16 @@ exports.ptr_compare = function (ip_list, connection, domain) {
         connection.results.push(this, {fcrdns: domain})
         return true
     }
-    const ip_list_ipv4 = ip_list.filter(net.isIPv4)
-    if (ip_list_ipv4.length && net_utils.same_ipv4_network(connection.remote.ip, ip_list_ipv4)) {
+
+    const ip_list_v4 = ip_list.filter(net.isIPv4)
+    if (ip_list_v4.length && net_utils.same_ipv4_network(connection.remote.ip, ip_list_v4)) {
         connection.results.add(this, {pass: 'fcrdns(net)' })
         connection.results.push(this, {fcrdns: domain})
         return true
     }
-    for (let j=0; j<ip_list.length; j++) {
-        connection.results.push(this, {other_ips: ip_list[j]})
+
+    for (const ip of ip_list) {
+        connection.results.push(this, {other_ips: ip})
     }
     return false
 }

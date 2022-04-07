@@ -2,7 +2,11 @@
 ## 1.0.5 - 2022-04-07
 
 - fix: reduce log noise from same_ipv4_network #35
+- style: use dns promises, backtick strings, for..of
+- style: ecmaVersion=2020 (node 14+)
+- require haraka-net-utils > 1.3.4
 - ci: more updates
+- ci: replace opendns test IP with 1.1.1.1
 
 
 ## 1.0.4 - 2022-04-07
