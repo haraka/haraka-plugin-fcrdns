@@ -2,7 +2,7 @@
 ## 1.0.4 - 2022-04-07
 
 - ci: restore to working order
-- 
+- fix: reduce log noise from same_ipv4_network #35
 
 
 ## 1.0.3 - 2018-11-20
