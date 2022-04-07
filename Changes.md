@@ -1,4 +1,10 @@
 
+## 1.0.4 - 2022-04-07
+
+- ci: restore to working order
+- 
+
+
 ## 1.0.3 - 2018-11-20
 
 - Fix data hook #12

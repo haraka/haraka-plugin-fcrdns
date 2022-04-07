@@ -1,9 +1,7 @@
 [![Build Status][ci-img]][ci-url]
 [![Code Climate][clim-img]][clim-url]
-[![Greenkeeper badge][gk-img]][gk-url]
 [![Windows Build Status][ci-win-img]][ci-win-url]
 [![NPM][npm-img]][npm-url]
-<!-- doesn't work in haraka plugins... yet. [![Code Coverage][cov-img]][cov-url]-->
 
 
 # haraka-plugin-fcrdns
@@ -149,7 +147,5 @@ The iprev results are added to the Authentication-Results header.
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-fcrdns
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns/badges/gpa.svg
 [clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns
-[gk-img]: https://badges.greenkeeper.io/haraka/haraka-plugin-fcrdns.svg
-[gk-url]: https://greenkeeper.io/
 [npm-img]: https://nodei.co/npm/haraka-plugin-fcrdns.png
 [npm-url]: https://www.npmjs.com/package/haraka-plugin-fcrdns
