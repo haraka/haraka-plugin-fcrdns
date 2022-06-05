@@ -138,10 +138,8 @@ The iprev results are added to the Authentication-Results header.
 
 
 <!-- leave these buried at the bottom of the document -->
-[ci-img]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci-test.yml/badge.svg
-[ci-url]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci-test.yml
-[cov-img]: https://codecov.io/github/haraka/haraka-plugin-fcrdns/coverage.svg
-[cov-url]: https://codecov.io/github/haraka/haraka-plugin-fcrdns
+[ci-img]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci.yml
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns/badges/gpa.svg
 [clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns
 [npm-img]: https://nodei.co/npm/haraka-plugin-fcrdns.png
