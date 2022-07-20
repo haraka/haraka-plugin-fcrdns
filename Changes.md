@@ -1,6 +1,11 @@
 ### Unreleased
 
 
+### [1.1.0] - 2022-07-20
+
+- fix: timeout DNS 1 second before plugin timeout
+
+
 ### [1.0.6] - 2022-06-05
 
 - ci: update GHA shared workflows
@@ -46,3 +51,4 @@
 
 - initial release
 [1.0.6]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/1.0.6
+[1.1.0]: /releases/tag/1.1.0
