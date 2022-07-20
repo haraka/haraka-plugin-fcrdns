@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "haraka-constants": "*",
-    "haraka-net-utils": "^1.3.4",
+    "haraka-net-utils": "^1.3.5",
     "haraka-tld": "*"
   }
 }

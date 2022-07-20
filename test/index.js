@@ -194,6 +194,36 @@ describe('check_fcrdns', function () {
     })
 })
 
+describe('resolve_ptr_names', function () {
+    this.timeout(5000);
+
+    const validCases = {
+        'mail.theartfarm.com': [],
+        'smtp.gmail.com': [],
+    }
+
+    for (const c in validCases) {
+        it(`gets IPs for ${c}`, function (done) {
+            const ptr_names = [ c ]
+            this.plugin.resolve_ptr_names(ptr_names, this.connection, () => {
+                // console.log(this.connection.results.store.fcrdns)
+                assert.ok(this.connection.results.store.fcrdns.ptr_name_to_ip[c].length)
+                assert.equal(this.connection.results.store.fcrdns.ptr_name_has_ips, true)
+                done()
+            })
+        })
+    }
+
+    it('ignores invalid host names', function (done) {
+        const ptr_names = [ 'mail.invalid' ]
+        this.plugin.resolve_ptr_names(ptr_names, this.connection, () => {
+            // console.log(this.connection.results.store.fcrdns)
+            assert.ok(this.connection.results.store.fcrdns.other_ips.length === 0)
+            done()
+        })
+    })
+})
+
 describe('do_dns_lookups', function () {
 
     const testIps = {
@@ -222,27 +252,4 @@ describe('do_dns_lookups', function () {
             this.connection)
         })
     }
-})
-
-describe('resolve_ptr_names', function () {
-    this.timeout(5000);
-
-    it('gets IPs from valid host names', function (done) {
-        const ptr_names = [ 'mail.theartfarm.com' ]
-        this.plugin.resolve_ptr_names(ptr_names, this.connection, () => {
-            // console.log(this.connection.results.store.fcrdns)
-            assert.ok(this.connection.results.store.fcrdns.other_ips.length)
-            done()
-        })
-    })
-
-    it('ignores invalid host names', function (done) {
-        const ptr_names = [ 'mail.invalid' ]
-        this.plugin.resolve_ptr_names(ptr_names, this.connection, () => {
-            // console.log(this.connection.results.store.fcrdns)
-            assert.ok(this.connection.results.store.fcrdns.other_ips.length === 0)
-            done()
-        })
-    })
-
 })

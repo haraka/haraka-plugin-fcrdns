@@ -4,6 +4,7 @@
 ### [1.1.0] - 2022-07-20
 
 - fix: timeout DNS 1 second before plugin timeout
+- resolve_ptr_names: simplify with async/await & Promise.all
 
 
 ### [1.0.6] - 2022-06-05
