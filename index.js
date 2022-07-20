@@ -122,13 +122,13 @@ exports.do_dns_lookups = function (next, connection) {
     const rip = connection.remote.ip
 
     // Set-up timer
-    const timeout = (this.cfg.main.timeout - 1) * 1000
+    const timeoutMs = (this.cfg.main.timeout - 1) * 1000
     const timer = setTimeout(() => {
         connection.results.add(this, {err: 'timeout', emit: true})
         if (!this.cfg.reject.no_rdns) return nextOnce()
         if (this.is_whitelisted(connection)) return nextOnce()
         nextOnce(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
-    }, timeout)
+    }, timeoutMs)
 
     let called_next = 0
 
