@@ -50,5 +50,7 @@
 ### 1.0.0 - 2017-02-05
 
 - initial release
+
+
 [1.0.6]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/1.0.6
-[1.1.0]: /releases/tag/1.1.0
+[1.1.0]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/1.1.0
