@@ -34,7 +34,7 @@ exports.load_fcrdns_ini = function () {
     })
 
     if (isNaN(plugin.cfg.main.timeout)) {
-        plugin.cfg.main.timeout = (plugin.timeout || 30) - 1;
+        plugin.cfg.main.timeout = plugin.timeout || 30;
     }
 }
 
@@ -54,19 +54,16 @@ exports.initialize_fcrdns = function (next, connection) {
     next()
 }
 
-exports.resolve_ptr_names = function (ptr_names, connection, next) {
+exports.resolve_ptr_names = async function (ptr_names, connection, next) {
 
     // Fetch A & AAAA records for each PTR host name
-    let pending_queries = 0
-    let queries_run = false
+    const promises = []
+    const forwardNames = []
 
-    const results = {}
-    for (let i=0; i<ptr_names.length; i++) {
-        const ptr_domain = ptr_names[i].toLowerCase()
-        results[ptr_domain] = []
+    for (const ptr_domain of ptr_names) {
 
         // Make sure TLD is valid
-        if (!tlds.get_organizational_domain(ptr_domain)) {
+        if (!tlds.get_organizational_domain(ptr_domain.toLowerCase())) {
             connection.results.add(this, {fail: `valid_tld(${ptr_domain})`})
             if (!this.cfg.reject.invalid_tld) continue
             if (this.is_whitelisted(connection)) continue
@@ -74,45 +71,26 @@ exports.resolve_ptr_names = function (ptr_names, connection, next) {
             return next(constants.DENY, `client [${connection.remote.ip}] rejected; invalid TLD in rDNS (${ptr_domain})`)
         }
 
-        queries_run = true
-        connection.logdebug(this, `domain: ${ptr_domain}`)
-        pending_queries++
+        connection.logdebug(this, `PTRdomain: ${ptr_domain}`)
 
-        net_utils.get_ips_by_host(ptr_domain, (err, ips) => {
-            pending_queries--
-
-            if (err) {
-                for (const e of err) {
-                    switch (e.code) {
-                        case dns.NODATA:
-                        case dns.NOTFOUND:
-                            break
-                        default:
-                            connection.results.add(this, {err: e.message})
-                    }
-                }
-            }
-
-            connection.logdebug(this, `${ptr_domain} => ${ips}`)
-            results[ptr_domain] = ips
-
-            if (pending_queries > 0) return
-
-            if (ips.length === 0) {
-                connection.results.add(this, { fail: `ptr_valid(${ptr_domain})` })
-            }
-
-            // Got all DNS results
-            connection.results.add(this, {ptr_name_to_ip: results})
-            this.check_fcrdns(connection, results, next)
-        })
+        forwardNames.push(ptr_domain.toLowerCase())
+        promises.push(net_utils.get_ips_by_host(ptr_domain.toLowerCase()))
     }
 
-    // No valid PTR
-    if (!queries_run || (queries_run && pending_queries === 0)) next()
+    Promise.all(promises).then(ipsPerHost => {
+        const resultsByForwardName = {}
+        for (let i = 0; i < ipsPerHost.length; i++) {
+            resultsByForwardName[forwardNames[i]] = ipsPerHost[i]
+            if (ipsPerHost[i].length === 0) {
+                connection.results.add(this, { fail: `ptr_valid(${forwardNames[i]})` })
+            }
+        }
+        connection.results.add(this, { ptr_name_to_ip: resultsByForwardName })
+        this.check_fcrdns(connection, resultsByForwardName, next)
+    })
 }
 
-exports.do_dns_lookups = function (next, connection) {
+exports.do_dns_lookups = async function (next, connection) {
 
     if (connection.remote.is_private) {
         connection.results.add(this, {skip: 'private_ip'})
@@ -122,12 +100,13 @@ exports.do_dns_lookups = function (next, connection) {
     const rip = connection.remote.ip
 
     // Set-up timer
+    const timeoutMs = (this.cfg.main.timeout - 1) * 1000
     const timer = setTimeout(() => {
         connection.results.add(this, {err: 'timeout', emit: true})
         if (!this.cfg.reject.no_rdns) return nextOnce()
         if (this.is_whitelisted(connection)) return nextOnce()
-        return nextOnce(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
-    }, this.cfg.main.timeout * 1000)
+        nextOnce(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
+    }, timeoutMs)
 
     let called_next = 0
 
@@ -139,14 +118,15 @@ exports.do_dns_lookups = function (next, connection) {
     }
 
     try {
-        resolver.reverse(rip).then(ptr_names => {
-            connection.logdebug(this, `rdns.reverse(${rip})`)
+        const ptr_names = await resolver.reverse(rip)
+        if (called_next) return // timed out
 
-            connection.results.add(this, {ptr_names})
-            connection.results.add(this, {has_rdns: true})
+        connection.logdebug(this, `rdns.reverse(${rip})`)
 
-            this.resolve_ptr_names(ptr_names, connection, nextOnce);
-        })
+        connection.results.add(this, {ptr_names})
+        connection.results.add(this, {has_rdns: true})
+
+        this.resolve_ptr_names(ptr_names, connection, nextOnce);
     }
     catch (err) {
         this.handle_ptr_error(connection, err, nextOnce)
