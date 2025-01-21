@@ -51,8 +51,8 @@ if (fcrdns) {
 
 Edit config/fcrdns.ini
 
-This plugin honors the whitelisting of IPs as set by the rdns_access plugin.
-For that to work, rdns_access needs to be listed _before_ this plugin in
+This plugin honors the whitelisting of IPs as set by the rdns*access plugin.
+For that to work, rdns_access needs to be listed \_before* this plugin in
 config/plugins.
 
 - timeout=30
