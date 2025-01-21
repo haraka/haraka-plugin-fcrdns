@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### [1.1.1] - 2025-01-21
 
+- style: automated code formatting with prettier
 - dep(eslint): upgrade to v9
 - populate [files] in package.json.
 - doc(CHANGELOG): mv Changes.md CHANGELOG.md

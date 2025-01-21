@@ -13,3 +13,6 @@ checks:
   return-statements:
     config:
       threshold: 6
+  method-complexity:
+    config:
+      threshold: 12
