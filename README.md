@@ -35,15 +35,15 @@ mv config/connect.fcrdns.ini config/fcrdns.ini
 Other plugins can use FCrDNS results like this:
 
 ```js
-const fcrdns = connection.results.get('fcrdns');
+const fcrdns = connection.results.get('fcrdns')
 if (fcrdns) {
-    if (fcrdns.fcrdns) {
-        // they passed, reward them
-    }
+  if (fcrdns.fcrdns) {
+    // they passed, reward them
+  }
 
-    if (connection.results.has('fcrdns', 'fail', /^is_generic/)) {
-        // their IP is in their hostname, unlikely to be MX, penalize
-    }
+  if (connection.results.has('fcrdns', 'fail', /^is_generic/)) {
+    // their IP is in their hostname, unlikely to be MX, penalize
+  }
 }
 ```
 
@@ -51,16 +51,16 @@ if (fcrdns) {
 
 Edit config/fcrdns.ini
 
-This plugin honors the whitelisting of IPs as set by the rdns\_access plugin.
-For that to work, rdns\_access needs to be listed *before* this plugin in
+This plugin honors the whitelisting of IPs as set by the rdns_access plugin.
+For that to work, rdns_access needs to be listed _before_ this plugin in
 config/plugins.
 
-* timeout=30
+- timeout=30
 
 When performing DNS lookups, time out after this many seconds.
 
 The following settings permit control of which test will block connections. To
-mimic the lookup\_rdns.strict plugin, set no\_rdns=true.
+mimic the lookup_rdns.strict plugin, set no_rdns=true.
 
 ```ini
     [reject]
@@ -79,13 +79,11 @@ mimic the lookup\_rdns.strict plugin, set no\_rdns=true.
     generic_rdns=false
 ```
 
-
 ## ANTI-SPAM EFFECTS
 
 The reverse DNS of zombie PCs in bot nets is out of the bot operators control.
 This presents a significant hurdle for a large portion of the hosts that
 attempt spam delivery.
-
 
 ## HOW IT WORKS
 
@@ -100,7 +98,6 @@ From Wikipedia: [Forward Confirmed Reverse DNS](http://en.wikipedia.org/wiki/FCr
 3. Any A or AAAA records returned by the second query are then compared
    against the original IP address. If there is a match, FCrDNS passes.
 
-
 ## iprev
 
 The iprev results are added to the Authentication-Results header.
@@ -109,33 +106,33 @@ The iprev results are added to the Authentication-Results header.
 [RFC 5451](http://www.ietf.org/rfc/rfc5451.txt)
 [RFC 7001](http://tools.ietf.org/html/rfc7001#section-3)
 
-2.6.3.  "iprev" Results
+2.6.3. "iprev" Results
 
-   pass:  The DNS evaluation succeeded, i.e., the "reverse" and
-      "forward" lookup results were returned and were in agreement.
+pass: The DNS evaluation succeeded, i.e., the "reverse" and
+"forward" lookup results were returned and were in agreement.
 
-   fail:  The DNS evaluation failed.  In particular, the "reverse" and
-      "forward" lookups each produced results, but they were not in
-      agreement, or the "forward" query completed but produced no
-      result, e.g., a DNS RCODE of 3, commonly known as NXDOMAIN, or an
-      RCODE of 0 (NOERROR) in a reply containing no answers, was
-      returned.
+fail: The DNS evaluation failed. In particular, the "reverse" and
+"forward" lookups each produced results, but they were not in
+agreement, or the "forward" query completed but produced no
+result, e.g., a DNS RCODE of 3, commonly known as NXDOMAIN, or an
+RCODE of 0 (NOERROR) in a reply containing no answers, was
+returned.
 
-   temperror:  The DNS evaluation could not be completed due to some
-      error that is likely transient in nature, such as a temporary DNS
-      error, e.g., a DNS RCODE of 2, commonly known as SERVFAIL, or
-      other error condition resulted.  A later attempt may produce a
-      final result.
+temperror: The DNS evaluation could not be completed due to some
+error that is likely transient in nature, such as a temporary DNS
+error, e.g., a DNS RCODE of 2, commonly known as SERVFAIL, or
+other error condition resulted. A later attempt may produce a
+final result.
 
-   permerror:  The DNS evaluation could not be completed because no PTR
-      data are published for the connecting IP address, e.g., a DNS
-      RCODE of 3, commonly known as NXDOMAIN, or an RCODE of 0 (NOERROR)
-      in a reply containing no answers, was returned.  This prevented
-      completion of the evaluation.  A later attempt is unlikely to
-      produce a final result.
-
+permerror: The DNS evaluation could not be completed because no PTR
+data are published for the connecting IP address, e.g., a DNS
+RCODE of 3, commonly known as NXDOMAIN, or an RCODE of 0 (NOERROR)
+in a reply containing no answers, was returned. This prevented
+completion of the evaluation. A later attempt is unlikely to
+produce a final result.
 
 <!-- leave these buried at the bottom of the document -->
+
 [ci-img]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci.yml
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns/badges/gpa.svg
