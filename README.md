@@ -1,7 +1,5 @@
 [![Build Status][ci-img]][ci-url]
 [![Code Climate][clim-img]][clim-url]
-[![NPM][npm-img]][npm-url]
-
 
 # haraka-plugin-fcrdns
 
@@ -142,5 +140,3 @@ The iprev results are added to the Authentication-Results header.
 [ci-url]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci.yml
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns/badges/gpa.svg
 [clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns
-[npm-img]: https://nodei.co/npm/haraka-plugin-fcrdns.png
-[npm-url]: https://www.npmjs.com/package/haraka-plugin-fcrdns
