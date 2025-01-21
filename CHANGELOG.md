@@ -1,4 +1,15 @@
+# Changelog
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/).
+
 ### Unreleased
+
+### [1.1.1] - 2025-01-21
+
+- dep(eslint): upgrade to v9
+- populate [files] in package.json.
+- doc(CHANGELOG): mv Changes.md CHANGELOG.md
+- doc(CONTRIBUTORS): added
 
 
 ### [1.1.0] - 2022-07-20
@@ -55,3 +66,5 @@
 
 [1.0.6]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/1.0.6
 [1.1.0]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/1.1.0
+[1.1.1]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.1.1
+[1.0.5]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.0.5
