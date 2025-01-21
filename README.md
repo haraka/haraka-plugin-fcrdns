@@ -51,8 +51,8 @@ if (fcrdns) {
 
 Edit config/fcrdns.ini
 
-This plugin honors the whitelisting of IPs as set by the rdns*access plugin.
-For that to work, rdns_access needs to be listed \_before* this plugin in
+This plugin honors the whitelisting of IPs as set by the rdns\_access plugin.
+For that to work, rdns\_access needs to be listed *before* this plugin in
 config/plugins.
 
 - timeout=30
@@ -60,23 +60,23 @@ config/plugins.
 When performing DNS lookups, time out after this many seconds.
 
 The following settings permit control of which test will block connections. To
-mimic the lookup_rdns.strict plugin, set no_rdns=true.
+mimic the lookup\_rdns.strict plugin, set no\_rdns=true.
 
 ```ini
-    [reject]
-    ; reject if the IP address has no PTR record
-    no_rdns=false
+[reject]
+; reject if the IP address has no PTR record
+no_rdns=false
 
-    ; reject if the FCrDNS test fails
-    no_fcrdns=false
+; reject if the FCrDNS test fails
+no_fcrdns=false
 
-    ; reject if the PTR points to a hostname without a valid TLD
-    invalid_tld=false
+; reject if the PTR points to a hostname without a valid TLD
+invalid_tld=false
 
-    ; reject if the rDNS is generic, examples:
-    ; 1.2.3.4.in.addr.arpa
-    ; c-67-171-0-90.hsd1.wa.comcast.net
-    generic_rdns=false
+; reject if the rDNS is generic, examples:
+; 1.2.3.4.in.addr.arpa
+; c-67-171-0-90.hsd1.wa.comcast.net
+generic_rdns=false
 ```
 
 ## ANTI-SPAM EFFECTS
@@ -108,23 +108,23 @@ The iprev results are added to the Authentication-Results header.
 
 2.6.3. "iprev" Results
 
-pass: The DNS evaluation succeeded, i.e., the "reverse" and
+*pass:* The DNS evaluation succeeded, i.e., the "reverse" and
 "forward" lookup results were returned and were in agreement.
 
-fail: The DNS evaluation failed. In particular, the "reverse" and
+*fail:* The DNS evaluation failed. In particular, the "reverse" and
 "forward" lookups each produced results, but they were not in
 agreement, or the "forward" query completed but produced no
 result, e.g., a DNS RCODE of 3, commonly known as NXDOMAIN, or an
 RCODE of 0 (NOERROR) in a reply containing no answers, was
 returned.
 
-temperror: The DNS evaluation could not be completed due to some
+*temperror:* The DNS evaluation could not be completed due to some
 error that is likely transient in nature, such as a temporary DNS
 error, e.g., a DNS RCODE of 2, commonly known as SERVFAIL, or
 other error condition resulted. A later attempt may produce a
 final result.
 
-permerror: The DNS evaluation could not be completed because no PTR
+*permerror:* The DNS evaluation could not be completed because no PTR
 data are published for the connecting IP address, e.g., a DNS
 RCODE of 3, commonly known as NXDOMAIN, or an RCODE of 0 (NOERROR)
 in a reply containing no answers, was returned. This prevented
