@@ -1,10 +1,10 @@
 'use strict'
 
 // built in node modules
-const dns = require('dns')
-const net = require('net')
+const dns = require('node:dns')
+const net = require('node:net')
 
-const { Resolver } = require('dns').promises
+const { Resolver } = require('node:dns').promises
 const resolver = new Resolver()
 
 // NPM modules
@@ -139,9 +139,9 @@ exports.do_dns_lookups = async function (next, connection) {
 exports.add_message_headers = function (next, connection) {
   const txn = connection.transaction
 
-  ;['rDNS', 'FCrDNS', 'rDNS-OtherIPs', 'HostID'].forEach((h) => {
+  for (const h of ['rDNS', 'FCrDNS', 'rDNS-OtherIPs', 'HostID']) {
     txn.remove_header(`X-Haraka-${h}`)
-  })
+  }
 
   const fcrdns = connection.results.get('fcrdns')
   if (!fcrdns) {
