@@ -139,9 +139,8 @@ exports.do_dns_lookups = async function (next, connection) {
 exports.add_message_headers = function (next, connection) {
   const txn = connection.transaction
 
-  for (const h of ['rDNS', 'FCrDNS', 'rDNS-OtherIPs', 'HostID']) {
-    txn.remove_header(`X-Haraka-${h}`)
-  }
+  txn.remove_header('X-Haraka-FCrDNS')
+  txn.remove_header('X-Haraka-rDNS-OtherIPs')
 
   const fcrdns = connection.results.get('fcrdns')
   if (!fcrdns) {
@@ -149,9 +148,6 @@ exports.add_message_headers = function (next, connection) {
     return next()
   }
 
-  if (fcrdns.name && fcrdns.name.length) {
-    txn.add_header('X-Haraka-rDNS', fcrdns.name.join(' '))
-  }
   if (fcrdns.fcrdns && fcrdns.fcrdns.length) {
     txn.add_header('X-Haraka-FCrDNS', fcrdns.fcrdns.join(' '))
   }
