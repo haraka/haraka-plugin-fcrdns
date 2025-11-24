@@ -274,3 +274,36 @@ describe('do_dns_lookups', function () {
     })
   }
 })
+
+describe('add_message_headers', function () {
+  it('removes message headers', function (done) {
+    this.connection.transaction.add_header('X-Haraka-FCrDNS', 'example.com')
+    this.connection.transaction.add_header('X-Haraka-rDNS-OtherIPs', '1.2.3.4')
+
+      this.plugin.add_message_headers((rc, msg) => {
+        const fcrdns = this.connection.transaction.header.get('X-Haraka-FCrDNS')
+        const other_ips = this.connection.transaction.header.get('X-Haraka-rDNS-OtherIPs')
+        assert.equal(fcrdns, '')
+        assert.equal(other_ips, '')
+        assert.equal(rc, undefined)
+        assert.equal(msg, undefined)
+        done()
+      }, this.connection)
+  })
+
+  it('adds message headers', function (done) {
+      this.connection.results.push('fcrdns', {fcrdns: 'mail.example.com'})
+      this.connection.results.push('fcrdns', {fcrdns: 'example.com'})
+      this.connection.results.push('fcrdns', {other_ips: '1.2.3.4'})
+
+      this.plugin.add_message_headers((rc, msg) => {
+        const fcrdns = this.connection.transaction.header.get('X-Haraka-FCrDNS')
+        const other_ips = this.connection.transaction.header.get('X-Haraka-rDNS-OtherIPs')
+        assert.equal(fcrdns, 'mail.example.com example.com')
+        assert.equal(other_ips, '1.2.3.4')
+        assert.equal(rc, undefined)
+        assert.equal(msg, undefined)
+        done()
+      }, this.connection)
+  })
+})
