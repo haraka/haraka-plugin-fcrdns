@@ -1,6 +1,6 @@
 // node.js built-ins
-const assert = require('assert')
-const dns = require('dns')
+const assert = require('node:assert')
+const dns = require('node:dns')
 
 // npm modules
 const fixtures = require('haraka-test-fixtures')
@@ -9,6 +9,7 @@ beforeEach(function (done) {
   this.plugin = new fixtures.plugin('fcrdns')
   this.plugin.register()
   this.connection = new fixtures.connection.createConnection()
+  this.connection.init_transaction()
   this.plugin.initialize_fcrdns(done, this.connection)
 })
 
