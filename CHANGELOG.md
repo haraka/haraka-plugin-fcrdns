@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+### [1.1.2] - 2025-11-24
+
+- add_message_headers: removed unused code
+- add_message_headers: added tests
+
 ### [1.1.1] - 2025-01-21
 
 - style: automated code formatting with prettier

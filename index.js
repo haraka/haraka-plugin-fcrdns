@@ -8,7 +8,6 @@ const { Resolver } = require('node:dns').promises
 const resolver = new Resolver()
 
 // NPM modules
-const constants = require('haraka-constants')
 const net_utils = require('haraka-net-utils')
 const tlds = require('haraka-tld')
 
@@ -71,7 +70,7 @@ exports.resolve_ptr_names = async function (ptr_names, connection, next) {
       if (this.is_whitelisted(connection)) continue
       if (net_utils.is_private_ip(connection.remote.ip)) continue
       return next(
-        constants.DENY,
+        DENY,
         `client [${connection.remote.ip}] rejected; invalid TLD in rDNS (${ptr_domain})`,
       )
     }
@@ -139,9 +138,8 @@ exports.do_dns_lookups = async function (next, connection) {
 exports.add_message_headers = function (next, connection) {
   const txn = connection.transaction
 
-  for (const h of ['rDNS', 'FCrDNS', 'rDNS-OtherIPs', 'HostID']) {
-    txn.remove_header(`X-Haraka-${h}`)
-  }
+  txn.remove_header('X-Haraka-FCrDNS')
+  txn.remove_header('X-Haraka-rDNS-OtherIPs')
 
   const fcrdns = connection.results.get('fcrdns')
   if (!fcrdns) {
@@ -149,9 +147,6 @@ exports.add_message_headers = function (next, connection) {
     return next()
   }
 
-  if (fcrdns.name && fcrdns.name.length) {
-    txn.add_header('X-Haraka-rDNS', fcrdns.name.join(' '))
-  }
   if (fcrdns.fcrdns && fcrdns.fcrdns.length) {
     txn.add_header('X-Haraka-FCrDNS', fcrdns.fcrdns.join(' '))
   }
