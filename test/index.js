@@ -92,16 +92,15 @@ describe('handle_ptr_error', function () {
 })
 
 describe('is_generic_rdns', function () {
-  it('mail.theartfarm.com', function (done) {
+  it('mail.theartfarm.com', function () {
     this.connection.remote.ip = '66.128.51.165'
     assert.equal(
       false,
       this.plugin.is_generic_rdns(this.connection, 'mail.theartfarm.com'),
     )
-    done()
   })
 
-  it('dsl-188-34-255-136.asretelecom.net', function (done) {
+  it('dsl-188-34-255-136.asretelecom.net', function () {
     this.connection.remote.ip = '188.34.255.136'
     assert.ok(
       this.plugin.is_generic_rdns(
@@ -109,10 +108,9 @@ describe('is_generic_rdns', function () {
         'dsl-188-34-255-136.asretelecom.net',
       ),
     )
-    done()
   })
 
-  it('c-76-121-96-159.hsd1.wa.comcast.net', function (done) {
+  it('c-76-121-96-159.hsd1.wa.comcast.net', function () {
     this.connection.remote.ip = '76.121.96.159'
     assert.ok(
       this.plugin.is_generic_rdns(
@@ -120,10 +118,9 @@ describe('is_generic_rdns', function () {
         'c-76-121-96-159.hsd1.wa.comcast.net',
       ),
     )
-    done()
   })
 
-  it('c-76-121-96-159.business.wa.comcast.net', function (done) {
+  it('c-76-121-96-159.business.wa.comcast.net', function () {
     this.connection.remote.ip = '76.121.96.159'
     assert.equal(
       false,
@@ -132,22 +129,18 @@ describe('is_generic_rdns', function () {
         'c-76-121-96-159.business.wa.comcast.net',
       ),
     )
-    done()
   })
-  it('null', function (done) {
+  it('null', function () {
     this.connection.remote.ip = '192.168.1.1'
     assert.equal(false, this.plugin.is_generic_rdns(this.connection, null))
-    done()
   })
-  it('tld, com', function (done) {
+  it('tld, com', function () {
     this.connection.remote.ip = '192.168.1.1'
     assert.equal(false, this.plugin.is_generic_rdns(this.connection, 'com'))
-    done()
   })
-  it('empty string', function (done) {
+  it('empty string', function () {
     this.connection.remote.ip = '192.168.1.1'
     assert.equal(false, this.plugin.is_generic_rdns(this.connection, ''))
-    done()
   })
 })
 
