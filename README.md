@@ -51,8 +51,8 @@ if (fcrdns) {
 
 Edit config/fcrdns.ini
 
-This plugin honors the whitelisting of IPs as set by the rdns\_access plugin.
-For that to work, rdns\_access needs to be listed *before* this plugin in
+This plugin honors the whitelisting of IPs as set by the rdns_access plugin.
+For that to work, rdns_access needs to be listed *before* this plugin in
 config/plugins.
 
 - timeout=30
@@ -60,7 +60,7 @@ config/plugins.
 When performing DNS lookups, time out after this many seconds.
 
 The following settings permit control of which test will block connections. To
-mimic the lookup\_rdns.strict plugin, set no\_rdns=true.
+mimic the lookup_rdns.strict plugin, set no_rdns=true.
 
 ```ini
 [reject]
@@ -108,23 +108,23 @@ The iprev results are added to the Authentication-Results header.
 
 2.6.3. "iprev" Results
 
-*pass:* The DNS evaluation succeeded, i.e., the "reverse" and
+_pass:_ The DNS evaluation succeeded, i.e., the "reverse" and
 "forward" lookup results were returned and were in agreement.
 
-*fail:* The DNS evaluation failed. In particular, the "reverse" and
+_fail:_ The DNS evaluation failed. In particular, the "reverse" and
 "forward" lookups each produced results, but they were not in
 agreement, or the "forward" query completed but produced no
 result, e.g., a DNS RCODE of 3, commonly known as NXDOMAIN, or an
 RCODE of 0 (NOERROR) in a reply containing no answers, was
 returned.
 
-*temperror:* The DNS evaluation could not be completed due to some
+_temperror:_ The DNS evaluation could not be completed due to some
 error that is likely transient in nature, such as a temporary DNS
 error, e.g., a DNS RCODE of 2, commonly known as SERVFAIL, or
 other error condition resulted. A later attempt may produce a
 final result.
 
-*permerror:* The DNS evaluation could not be completed because no PTR
+_permerror:_ The DNS evaluation could not be completed because no PTR
 data are published for the connecting IP address, e.g., a DNS
 RCODE of 3, commonly known as NXDOMAIN, or an RCODE of 0 (NOERROR)
 in a reply containing no answers, was returned. This prevented

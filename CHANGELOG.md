@@ -4,6 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+### [1.2.0] - 2026-03-18
+
+- deps: bump all versions to latest
+- style: refactored most callbacks to async
+- test: refactored tests into tables
+- test: added a lot of them
+- test: working test coverage
+- ci: updated shared workflows
+
 ### [1.1.2] - 2025-11-24
 
 - add_message_headers: removed unused code
@@ -65,3 +74,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 [1.1.0]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/1.1.0
 [1.1.1]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.1.1
 [1.0.5]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.0.5
+[1.1.2]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.1.2
+[1.2.0]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.2.0

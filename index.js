@@ -81,17 +81,18 @@ exports.resolve_ptr_names = async function (ptr_names, connection, next) {
     promises.push(net_utils.get_ips_by_host(ptr_domain.toLowerCase()))
   }
 
-  Promise.all(promises).then((ipsPerHost) => {
-    const resultsByForwardName = {}
-    for (let i = 0; i < ipsPerHost.length; i++) {
-      resultsByForwardName[forwardNames[i]] = ipsPerHost[i]
-      if (ipsPerHost[i].length === 0) {
-        connection.results.add(this, { fail: `ptr_valid(${forwardNames[i]})` })
-      }
+  const ipsPerHost = await Promise.all(promises)
+  const resultsByForwardName = {}
+  for (const [i, ips] of ipsPerHost.entries()) {
+    const forwardName = forwardNames[i]
+    resultsByForwardName[forwardName] = ips
+    if (ips.length === 0) {
+      connection.results.add(this, { fail: `ptr_valid(${forwardName})` })
     }
-    connection.results.add(this, { ptr_name_to_ip: resultsByForwardName })
-    this.check_fcrdns(connection, resultsByForwardName, next)
-  })
+  }
+
+  connection.results.add(this, { ptr_name_to_ip: resultsByForwardName })
+  return this.check_fcrdns(connection, resultsByForwardName, next)
 }
 
 exports.do_dns_lookups = async function (next, connection) {
@@ -111,25 +112,25 @@ exports.do_dns_lookups = async function (next, connection) {
     nextOnce(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
   }, timeoutMs)
 
-  let called_next = 0
+  let calledNext = false
 
   function nextOnce(code, msg) {
-    if (called_next) return
-    called_next++
+    if (calledNext) return
+    calledNext = true
     clearTimeout(timer)
     next(code, msg)
   }
 
   try {
     const ptr_names = await resolver.reverse(rip)
-    if (called_next) return // timed out
+    if (calledNext) return // timed out
 
     connection.logdebug(this, `rdns.reverse(${rip})`)
 
     connection.results.add(this, { ptr_names })
     connection.results.add(this, { has_rdns: true })
 
-    this.resolve_ptr_names(ptr_names, connection, nextOnce)
+    await this.resolve_ptr_names(ptr_names, connection, nextOnce)
   } catch (err) {
     this.handle_ptr_error(connection, err, nextOnce)
   }
@@ -147,10 +148,10 @@ exports.add_message_headers = function (next, connection) {
     return next()
   }
 
-  if (fcrdns.fcrdns && fcrdns.fcrdns.length) {
+  if (fcrdns.fcrdns?.length) {
     txn.add_header('X-Haraka-FCrDNS', fcrdns.fcrdns.join(' '))
   }
-  if (fcrdns.other_ips && fcrdns.other_ips.length) {
+  if (fcrdns.other_ips?.length) {
     txn.add_header('X-Haraka-rDNS-OtherIPs', fcrdns.other_ips.join(' '))
   }
   next()
@@ -158,6 +159,7 @@ exports.add_message_headers = function (next, connection) {
 
 exports.handle_ptr_error = function (connection, err, next) {
   const rip = connection.remote.ip
+  const errorCode = err?.code || 'unknown'
 
   switch (err.code) {
     case dns.NOTFOUND:
@@ -169,17 +171,17 @@ exports.handle_ptr_error = function (connection, err, next) {
       return next(DENY, `client [${rip}] rejected; no rDNS`)
   }
 
-  connection.results.add(this, { err: err.code })
+  connection.results.add(this, { err: errorCode })
 
   if (!this.cfg.reject.no_rdns) return next()
   if (this.is_whitelisted(connection)) return next()
 
-  next(DENYSOFT, `client [${rip}] rDNS lookup error (${err})`)
+  next(DENYSOFT, `client [${rip}] rDNS lookup error (${errorCode})`)
 }
 
 exports.check_fcrdns = function (connection, results, next) {
   let last_domain
-  for (const fdom in results) {
+  for (const [fdom, ips] of Object.entries(results)) {
     // mail.example.com
     if (!fdom) continue
     const org_domain = tlds.get_organizational_domain(fdom) // example.com
@@ -192,7 +194,7 @@ exports.check_fcrdns = function (connection, results, next) {
     }
 
     // FCrDNS? PTR -> (A | AAAA) 3. PTR comparison
-    this.ptr_compare(results[fdom], connection, fdom)
+    this.ptr_compare(ips, connection, fdom)
 
     connection.results.add(this, { ptr_name_has_ips: true })
 
@@ -214,7 +216,7 @@ exports.check_fcrdns = function (connection, results, next) {
 
   const r = connection.results.get('fcrdns')
   if (!r) return next()
-  if (r.fcrdns && r.fcrdns.length) return next()
+  if (r.fcrdns?.length) return next()
 
   if (this.cfg.reject.no_fcrdns) {
     return next(DENY, 'Sorry, no FCrDNS match found')
@@ -259,7 +261,7 @@ exports.save_auth_results = function (connection) {
     connection.auth_results('iprev=permerror')
     return false
   }
-  if (r.err.length) {
+  if (r.err?.length) {
     connection.auth_results('iprev=temperror')
     return false
   }
@@ -295,7 +297,7 @@ exports.is_generic_rdns = function (connection, domain) {
 }
 
 function hostNamesAsStr(list) {
-  if (!list) return ''
+  if (!list?.length) return ''
   if (list.length > 2) return `${list.slice(0, 2).join(',')}...`
   return list.join(',')
 }
@@ -317,7 +319,5 @@ exports.log_summary = function (connection) {
 
 exports.is_whitelisted = function (connection) {
   // allow rdns_acccess whitelist to override
-  if (!connection.notes.rdns_access) return false
-  if (connection.notes.rdns_access !== 'white') return false
-  return true
+  return connection.notes.rdns_access === 'white'
 }
