@@ -175,6 +175,27 @@ describe('check_fcrdns', () => {
     this.plugin.check_fcrdns(this.connection, results, () => {})
     assert.equal(this.connection.results.store.fcrdns.ptr_multidomain, true)
   })
+
+  it('does NOT set ptr_name_has_ips when PTR has no IPs', () => {
+    this.connection.remote.ip = '10.1.1.1'
+    const results = { 'foo.example.com': [] }
+    this.plugin.check_fcrdns(this.connection, results, () => {})
+    assert.equal(this.connection.results.store.fcrdns.ptr_name_has_ips, false)
+  })
+
+  it('sets ptr_name_has_ips true when PTR has IPs', () => {
+    this.connection.remote.ip = '10.1.1.1'
+    const results = { 'foo.example.com': ['10.1.1.1'] }
+    this.plugin.check_fcrdns(this.connection, results, () => {})
+    assert.equal(this.connection.results.store.fcrdns.ptr_name_has_ips, true)
+  })
+
+  it('tracks generic_rdns decision separately', () => {
+    this.connection.remote.ip = '188.34.255.136'
+    const results = { 'dsl-188-34-255-136.asretelecom.net': ['1.2.3.4'] }
+    this.plugin.check_fcrdns(this.connection, results, () => {})
+    assert.equal(this.connection.results.store.fcrdns.generic_rdns, true)
+  })
 })
 
 describe('resolve_ptr_names', () => {

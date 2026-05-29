@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+- fix: populate `invalid_tlds` with the offending PTR name (was always empty)
+- fix: set `ptr_name_has_ips` only when the PTR resolves to ≥1 forward address
+- fix: log_summary `generic_rdns` reflects the actual is_generic_rdns decision
 - test: refactored against test-fixtures 1.7.0
 
 ### [1.2.0] - 2026-03-18

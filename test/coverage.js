@@ -136,6 +136,19 @@ describe('coverage hooks', () => {
     assert.match(msg, /invalid TLD/)
   })
 
+  it('populates invalid_tlds with offending PTR names (C1)', async () => {
+    this.plugin.cfg.reject.invalid_tld = false
+    this.connection.remote.ip = '1.2.3.4'
+    await this.plugin.resolve_ptr_names(
+      ['bad.invalid'],
+      this.connection,
+      () => {},
+    )
+    assert.deepEqual(this.connection.results.store.fcrdns.invalid_tlds, [
+      'bad.invalid',
+    ])
+  })
+
   it('resolve_ptr_names skips DENY for whitelisted connections with invalid TLD', async () => {
     this.plugin.cfg.reject.invalid_tld = true
     this.connection.remote.ip = '1.2.3.4'
