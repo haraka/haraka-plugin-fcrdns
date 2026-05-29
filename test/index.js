@@ -3,16 +3,12 @@ const dns = require('node:dns')
 const { beforeEach, describe, it } = require('node:test')
 
 const constants = require('haraka-constants')
-const fixtures = require('haraka-test-fixtures')
+const { callHook, makeConnection, makePlugin } = require('haraka-test-fixtures')
 
 beforeEach(async () => {
-  this.plugin = new fixtures.plugin('fcrdns')
-  this.plugin.register()
-  this.connection = new fixtures.connection.createConnection()
-  this.connection.init_transaction()
-  await new Promise((resolve) => {
-    this.plugin.initialize_fcrdns(resolve, this.connection)
-  })
+  this.plugin = makePlugin('fcrdns')
+  this.connection = makeConnection({ withTxn: true })
+  await callHook(this.plugin, 'initialize_fcrdns', this.connection)
 })
 
 describe('fcrdns', () => {
@@ -234,8 +230,7 @@ describe('do_dns_lookups', () => {
 
 describe('add_message_headers', () => {
   it('handles missing fcrdns results', () => {
-    const conn = fixtures.connection.createConnection()
-    conn.init_transaction()
+    const conn = makeConnection({ withTxn: true })
     this.plugin.add_message_headers((rc) => assert.equal(rc, undefined), conn)
   })
 
