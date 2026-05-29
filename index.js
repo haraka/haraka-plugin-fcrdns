@@ -37,7 +37,7 @@ exports.load_fcrdns_ini = function () {
   )
 
   if (isNaN(plugin.cfg.main.timeout)) {
-    plugin.cfg.main.timeout = plugin.timeout || 30
+    plugin.cfg.main.timeout = (plugin.timeout || 30) - 1 || 29
   }
 }
 
@@ -52,6 +52,7 @@ exports.initialize_fcrdns = function (next, connection) {
     has_rdns: false, // does IP have PTR records?
     ptr_name_has_ips: false, // PTR host has IP address(es)
     ptr_name_to_ip: {}, // host names and their IP addresses
+    generic_rdns: false, // is_generic_rdns() classified this PTR generic
   })
 
   next()
@@ -66,6 +67,7 @@ exports.resolve_ptr_names = async function (ptr_names, connection, next) {
     // Make sure TLD is valid
     if (!tlds.get_organizational_domain(ptr_domain.toLowerCase())) {
       connection.results.add(this, { fail: `valid_tld(${ptr_domain})` })
+      connection.results.push(this, { invalid_tlds: ptr_domain })
       if (!this.cfg.reject.invalid_tld) continue
       if (this.is_whitelisted(connection)) continue
       if (net_utils.is_private_ip(connection.remote.ip)) continue
@@ -103,14 +105,12 @@ exports.do_dns_lookups = async function (next, connection) {
 
   const rip = connection.remote.ip
 
-  // Set-up timer
-  const timeoutMs = (this.cfg.main.timeout - 1) * 1000
   const timer = setTimeout(() => {
     connection.results.add(this, { err: 'timeout', emit: true })
     if (!this.cfg.reject.no_rdns) return nextOnce()
     if (this.is_whitelisted(connection)) return nextOnce()
     nextOnce(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
-  }, timeoutMs)
+  }, this.cfg.main.timeout * 1000)
 
   let calledNext = false
 
@@ -196,10 +196,15 @@ exports.check_fcrdns = function (connection, results, next) {
     // FCrDNS? PTR -> (A | AAAA) 3. PTR comparison
     this.ptr_compare(ips, connection, fdom)
 
-    connection.results.add(this, { ptr_name_has_ips: true })
+    // only set ptr_name_has_ips when the PTR resolved to >= 1 forward addresses.
+    if (ips?.length) {
+      connection.results.add(this, { ptr_name_has_ips: true })
+    }
 
+    const isGeneric = this.is_generic_rdns(connection, fdom)
+    if (isGeneric) connection.results.add(this, { generic_rdns: true })
     if (
-      this.is_generic_rdns(connection, fdom) &&
+      isGeneric &&
       this.cfg.reject.generic_rdns &&
       !this.is_whitelisted(connection)
     ) {
@@ -313,7 +318,7 @@ exports.log_summary = function (connection) {
       ` rdns="${hostNamesAsStr(r.ptr_names)}" rdns_len=${r.ptr_names.length}` +
       ` fcrdns="${hostNamesAsStr(r.fcrdns)}" fcrdns_len=${r.fcrdns.length}` +
       ` other_ips_len=${r.other_ips.length} invalid_tlds=${r.invalid_tlds.length}` +
-      ` generic_rdns=${r.ptr_name_has_ips ? 'true' : 'false'}`,
+      ` generic_rdns=${r.generic_rdns ? 'true' : 'false'}`,
   )
 }
 
