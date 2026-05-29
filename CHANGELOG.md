@@ -4,10 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+### [1.2.1] - 2026-05-29
+
 - fix: populate `invalid_tlds` with the offending PTR name (was always empty)
 - fix: set `ptr_name_has_ips` only when the PTR resolves to ≥1 forward address
 - fix: log_summary `generic_rdns` reflects the actual is_generic_rdns decision
-- test: refactored against test-fixtures 1.7.0
+- test: refactored against test-fixtures 1.7.0 #44
 
 ### [1.2.0] - 2026-03-18
 
@@ -81,3 +83,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 [1.0.5]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.0.5
 [1.1.2]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.1.2
 [1.2.0]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.2.0
+[1.2.1]: https://github.com/haraka/haraka-plugin-fcrdns/releases/tag/v1.2.1
