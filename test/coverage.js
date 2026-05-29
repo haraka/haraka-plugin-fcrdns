@@ -179,4 +179,60 @@ describe('coverage hooks', () => {
     }
     assertResult(this.connection, this.plugin, 'fail', /ptr_valid/)
   })
+
+  it('do_dns_lookups catch block calls handle_ptr_error on resolver failure', async () => {
+    const dnsPromises = require('node:dns').promises
+    const origReverse = dnsPromises.Resolver.prototype.reverse
+    dnsPromises.Resolver.prototype.reverse = async () => {
+      throw Object.assign(new Error('nxdomain'), { code: 'ENOTFOUND' })
+    }
+    try {
+      const { rc } = await callHook(
+        this.plugin,
+        'do_dns_lookups',
+        this.connection,
+      )
+      assert.equal(rc, undefined) // reject.no_rdns is false by default
+    } finally {
+      dnsPromises.Resolver.prototype.reverse = origReverse
+    }
+  })
+
+  it('do_dns_lookups timer fires and denies when reject.no_rdns is true', async () => {
+    const dnsPromises = require('node:dns').promises
+    const origReverse = dnsPromises.Resolver.prototype.reverse
+    dnsPromises.Resolver.prototype.reverse = () => new Promise(() => {}) // never resolves
+    this.plugin.cfg.main.timeout = 1 // timeoutMs = (1-1)*1000 = 0 → fires immediately
+    this.plugin.cfg.reject.no_rdns = true
+    try {
+      const { rc } = await callHook(
+        this.plugin,
+        'do_dns_lookups',
+        this.connection,
+      )
+      assert.equal(rc, constants.DENYSOFT)
+    } finally {
+      dnsPromises.Resolver.prototype.reverse = origReverse
+    }
+    assertResult(this.connection, this.plugin, 'err', 'timeout')
+  })
+
+  it('do_dns_lookups timer fires without deny when whitelisted', async () => {
+    const dnsPromises = require('node:dns').promises
+    const origReverse = dnsPromises.Resolver.prototype.reverse
+    dnsPromises.Resolver.prototype.reverse = () => new Promise(() => {}) // never resolves
+    this.plugin.cfg.main.timeout = 1 // timeoutMs = 0 → fires immediately
+    this.plugin.cfg.reject.no_rdns = true
+    this.connection.notes.rdns_access = 'white'
+    try {
+      const { rc } = await callHook(
+        this.plugin,
+        'do_dns_lookups',
+        this.connection,
+      )
+      assert.equal(rc, undefined)
+    } finally {
+      dnsPromises.Resolver.prototype.reverse = origReverse
+    }
+  })
 })
