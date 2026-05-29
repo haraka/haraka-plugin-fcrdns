@@ -235,4 +235,23 @@ describe('coverage hooks', () => {
       dnsPromises.Resolver.prototype.reverse = origReverse
     }
   })
+
+  it('do_dns_lookups timer fires without deny when reject.no_rdns is false', async () => {
+    const dnsPromises = require('node:dns').promises
+    const origReverse = dnsPromises.Resolver.prototype.reverse
+    dnsPromises.Resolver.prototype.reverse = () => new Promise(() => {}) // never resolves
+    this.plugin.cfg.main.timeout = 1 // timeoutMs = 0 → fires immediately
+    this.plugin.cfg.reject.no_rdns = false
+    try {
+      const { rc } = await callHook(
+        this.plugin,
+        'do_dns_lookups',
+        this.connection,
+      )
+      assert.equal(rc, undefined)
+    } finally {
+      dnsPromises.Resolver.prototype.reverse = origReverse
+    }
+    assertResult(this.connection, this.plugin, 'err', 'timeout')
+  })
 })
