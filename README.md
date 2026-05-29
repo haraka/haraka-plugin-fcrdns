@@ -1,7 +1,6 @@
-[![Build Status][ci-img]][ci-url]
-[![Code Climate][clim-img]][clim-url]
-
 # haraka-plugin-fcrdns
+
+[![Test][ci-img]][ci-url] [![Cover][cov-img]][cov-url] [![Qlty][qlty-img]][qlty-url]
 
 [Forward Confirmed Reverse DNS](http://en.wikipedia.org/wiki/FCrDNS)
 
@@ -135,5 +134,7 @@ produce a final result.
 
 [ci-img]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/haraka/haraka-plugin-fcrdns/actions/workflows/ci.yml
-[clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns/badges/gpa.svg
-[clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-fcrdns
+[cov-img]: https://codecov.io/github/haraka/haraka-plugin-fcrdns/coverage.svg
+[cov-url]: https://codecov.io/github/haraka/haraka-plugin-fcrdns
+[qlty-img]: https://qlty.sh/gh/haraka/projects/haraka-plugin-fcrdns/maintainability.svg
+[qlty-url]: https://qlty.sh/gh/haraka/projects/haraka-plugin-fcrdns
