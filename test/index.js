@@ -3,9 +3,15 @@ const dns = require('node:dns')
 const { beforeEach, describe, it } = require('node:test')
 
 const constants = require('haraka-constants')
+const tlds = require('haraka-tld')
 const { callHook, makeConnection, makePlugin } = require('haraka-test-fixtures')
 
 beforeEach(async () => {
+  // haraka-tld loads its public-suffix list asynchronously; without this
+  // get_organizational_domain() returns null and is_generic_rdns (et al)
+  // misfire on slow CI runners.
+  await tlds.ready
+
   this.plugin = makePlugin('fcrdns')
   this.connection = makeConnection({ withTxn: true })
   await callHook(this.plugin, 'initialize_fcrdns', this.connection)
