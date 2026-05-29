@@ -54,9 +54,14 @@ This plugin honors the whitelisting of IPs as set by the rdns_access plugin.
 For that to work, rdns_access needs to be listed *before* this plugin in
 config/plugins.
 
-- timeout=29
+### timeout
 
-When performing DNS lookups, time out after this many seconds.
+When performing DNS lookups, time out after this many seconds. Default is plugin.timeout minus 1 second (typically 29s) to avoid race conditions.
+
+```ini
+; [main]
+timeout=29
+```
 
 The following settings permit control of which test will block connections. To
 mimic the lookup_rdns.strict plugin, set no_rdns=true.
