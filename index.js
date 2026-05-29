@@ -37,7 +37,7 @@ exports.load_fcrdns_ini = function () {
   )
 
   if (isNaN(plugin.cfg.main.timeout)) {
-    plugin.cfg.main.timeout = plugin.timeout || 29
+    plugin.cfg.main.timeout = (plugin.timeout || 30) - 1 || 29
   }
 }
 
@@ -105,13 +105,12 @@ exports.do_dns_lookups = async function (next, connection) {
 
   const rip = connection.remote.ip
 
-  const timeoutMs = this.cfg.main.timeout * 1000
   const timer = setTimeout(() => {
     connection.results.add(this, { err: 'timeout', emit: true })
     if (!this.cfg.reject.no_rdns) return nextOnce()
     if (this.is_whitelisted(connection)) return nextOnce()
     nextOnce(DENYSOFT, `client [${rip}] rDNS lookup timeout`)
-  }, timeoutMs)
+  }, this.cfg.main.timeout * 1000)
 
   let calledNext = false
 
